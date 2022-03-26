@@ -123,6 +123,8 @@ function RenderLeader(props) {
         </>
         );
     });
-    return <>{leaders}</>;
+    return <>
+    {leaders}
+    </>;
 }
 export default About;
