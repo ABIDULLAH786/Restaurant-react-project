@@ -1,23 +1,28 @@
-import React, { Component, useState } from "react";
 import Menu from "./MenuComponent";
 import DishDetail from "./DishdetailComponent";
-import { DISHES } from "../shared/dishes";
 import Header from "./HeaderComponent";
 import Footer from "./FooterComponent";
 import Home from "./HomeComponent";
-import { Routes, Route, useParams } from "react-router-dom";
 import Contact from "./ContactComponent";
 import About from "./AboutComponent";
-import { COMMENTS } from "../shared/comments";
-import { PROMOTIONS } from "../shared/promotions";
-import { LEADERS } from "../shared/leaders";
-// I convert my class based component into functional based component 
-// because i am more confortable with functional based, so please do not assesst my work based on this thing 
+
+import React, {useState } from "react";
+import { Routes, Route, useParams, withRouter } from "react-router-dom";
+import {connect} from "react-redux"
+
+const mapStateToProps = state => {
+  return{
+    comments: state.comments,
+    promotions: state.promotions,
+    leaders: state.leaders,
+    dishes: state.dishes
+  }
+}
 function Main(props){
-  const [dishes, setDishes] = useState(DISHES);
-  const [comments, setComments] = useState(COMMENTS);
-  const [promotions, setPromotions] = useState(PROMOTIONS);
-  const [leaders, setLeaders] = useState(LEADERS);
+  // const [dishes, setDishes] = useState(DISHES);
+  // const [comments, setComments] = useState(COMMENTS);
+  // const [promotions, setPromotions] = useState(PROMOTIONS);
+  // const [leaders, setLeaders] = useState(LEADERS);
   const [detail, setDetail] = useState(false);
   const [selectedDish, setSelectDish] = useState();
 
@@ -35,9 +40,9 @@ function Main(props){
           path="/"
           element={
             <Home
-              dish={dishes.filter((dish) => dish.featured)[0]}
-              promotion={ promotions.filter((promo) => promo.featured)[0]}
-              leader={leaders.filter((leader) => leader.featured)[0]}
+              dish={props.dishes.filter((dish) => dish.featured)[0]}
+              promotion={ props.promotions.filter((promo) => promo.featured)[0]}
+              leader={props.leaders.filter((leader) => leader.featured)[0]}
             />
           }
         />
@@ -45,29 +50,29 @@ function Main(props){
           path="/menu"
           element={
             <Menu
-              dishes={dishes}
+              dishes={props.dishes}
               onClick={(dishId) => {
                 onDishSelect(dishId);
                 setDetail((prev) => ({ detail: true }));
-                alert(dishes);
+                alert(props.dishes);
               }}
             />
           }
         />
         <Route path="/menu/:dishId" element={
           <DishDetail
-            dish={dishes.filter((dish) => dish.id === 1)}
-            comments={comments.filter((comment) => comment.dishId === 1)}
+            dish={props.dishes.filter((dish) => dish.id === 1)}
+            comments={props.comments.filter((comment) => comment.dishId === 1)}
           />} 
         />
         <Route exact path="/contactus" element={<Contact/>} />
-        <Route exact path="/aboutus" element={<About leaderslist={leaders}/>} />
+        <Route exact path="/aboutus" element={<About leaderslist={props.leaders}/>} />
       </Routes>
       {/* Dish Details */}
       {detail && (
         <DishDetail
           dish={
-            dishes.filter(
+            props.dishes.filter(
               (dish) => dish.id === selectedDish
             )[0]
           }
@@ -77,4 +82,4 @@ function Main(props){
     </div>
   );
 }
-export default Main;
+export default connect(mapStateToProps)(Main);
